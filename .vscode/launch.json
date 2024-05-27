@@ -1,0 +1,35 @@
+{
+    "configurations": [
+        {
+            "type": "java",
+            "name": "BackendApplication",
+            "request": "launch",
+            "mainClass": "com.nguyenvu.backend.backend.BackendApplication",
+            "projectName": "backend"
+        },
+        {
+            "type": "java",
+            "name": "BackendApplication",
+            "request": "launch",
+            "mainClass": "com.nguyenvu.backend.BackendApplication",
+            "projectName": ""
+        },
+        {
+            "type": "java",
+            "name": "BackendApplication",
+            "request": "launch",
+            "mainClass": "BackendApplication",
+            "projectName": "backend"
+        },
+        {
+            "type": "java",
+            "name": "Spring Boot-BackendApplication<backend>",
+            "request": "launch",
+            "cwd": "${workspaceFolder}",
+            "mainClass": "com.nguyenvu.backend.BackendApplication",
+            "projectName": "backend",
+            "args": "",
+            "envFile": "${workspaceFolder}/.env"
+        }
+    ]
+}
