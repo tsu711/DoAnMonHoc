@@ -33,13 +33,13 @@ public class UserController {
     private static final byte[] SECRET_KEY = null;
     @Autowired
     private UserRepository userRepository;
-    private UserService productService;
+    private UserService userService;
     // Create User REST API
 
 @PostMapping
 
 public ResponseEntity<User> createUser(@RequestBody User User) {
-User savedUser = productService.createUser(User);
+User savedUser = userService.createUser(User);
 return new ResponseEntity<>(savedUser, HttpStatus.CREATED);
 
 
@@ -49,10 +49,13 @@ return new ResponseEntity<>(savedUser, HttpStatus.CREATED);
 // http://1ocalhost:8080/api/Users/1
 
 @GetMapping("{id}")
-
-public ResponseEntity<User> getUserById(@PathVariable("id") Long UserId) {
-User User = productService.getUserById(UserId);
-return new ResponseEntity<>(User, HttpStatus.OK);
+public ResponseEntity<User> getUserById(@PathVariable("id") Long id) {
+    User user = userService.getUserById(id);
+    if (user != null) {
+        return new ResponseEntity<>(user, HttpStatus.OK);
+    } else {
+        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+    }
 }
 // Get All Users REST API
 
@@ -61,7 +64,7 @@ return new ResponseEntity<>(User, HttpStatus.OK);
 @GetMapping
 
 public ResponseEntity<List<User>> getAllUsers() {
-List<User> Users = productService.getAllUsers();
+List<User> Users = userService.getAllUsers();
 HttpHeaders headers = new HttpHeaders();
 headers.add("Content-Range", "item 0-"+ Users.size()+"/"+Users.size());
 return ResponseEntity.ok().headers(headers).body(Users);
@@ -75,7 +78,7 @@ return ResponseEntity.ok().headers(headers).body(Users);
 public ResponseEntity<User> updateUser(@PathVariable("id") Long UserId,
 @RequestBody User User) {
 User.setId(UserId);
-User updatedUser = productService.updateUser(User);
+User updatedUser = userService.updateUser(User);
 return new ResponseEntity<>(updatedUser, HttpStatus.OK);
 }
 // Delete User REST API
@@ -83,7 +86,7 @@ return new ResponseEntity<>(updatedUser, HttpStatus.OK);
 @DeleteMapping("{id}")
 
 public ResponseEntity<String> deleteUser(@PathVariable("id") Long UserId) {
-productService.deleteUser(UserId);
+    userService.deleteUser(UserId);
 return new ResponseEntity<>("User successfully deleted!", HttpStatus.OK);
 }
 @PostMapping("/register")
@@ -93,11 +96,13 @@ public ResponseEntity register(@RequestBody User user) {
     
     return new ResponseEntity("Dang ky thanh cong",HttpStatus.OK);
 }
+
+
 @PostMapping("/login")
 public ResponseEntity<?> login(@RequestBody User user) {
     try {
         // Thực hiện băm mật khẩu và thêm muối
-        Optional<User> existingUser = userRepository.findByFullnameAndPassword(user.getFullname(), user.getPassword());
+        Optional<User> existingUser = userRepository.findByUsernameAndPassword(user.getUsername(), user.getPassword());
 
         if (existingUser.isPresent()) {
             // Lấy thông tin người dùng từ existingUser
@@ -106,11 +111,12 @@ public ResponseEntity<?> login(@RequestBody User user) {
             // Tạo một đối tượng chứa thông tin cần trả về cho người dùng
             Map<String, Object> response = new HashMap<>();
             response.put("fullname", loggedInUser.getFullname()); // Thêm số điện thoại vào response
+            response.put("username", loggedInUser.getUsername());
             response.put("token", generateJwt(loggedInUser)); // Thêm token vào response
             response.put("email", loggedInUser.getEmail()); // Thêm email vào response
             response.put("address", loggedInUser.getAddress()); // Thêm địa chỉ vào response
             response.put("phone_number", loggedInUser.getPhone_number()); // Thêm số điện thoại vào response
-
+            response.put("id", loggedInUser.getId()); 
             // Trả về response
             return ResponseEntity.ok().body(response);
         } else {
@@ -127,7 +133,7 @@ public ResponseEntity<?> login(@RequestBody User user) {
         Date expiration = new Date(now.getTime() + 86400000); // 1 ngày
 
         String token = Jwts.builder()
-                .setSubject(user.getFullname())
+                .setSubject(user.getUsername())
                 .setIssuedAt(now)
                 .setExpiration(expiration)
                 // .signWith(SignatureAlgorithm.HS256, SECRET_KEY)
@@ -147,7 +153,17 @@ public ResponseEntity<?> logout(HttpServletRequest request) {
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Lỗi trong quá trình đăng xuất");
     }
 }
-
+@GetMapping("/check-username/{username}")
+public ResponseEntity<?> checkUsernameExists(@PathVariable("username") String username) {
+    Optional<User> existingUser = userRepository.findByUsername(username);
+    if (existingUser.isPresent()) {
+        // Username đã tồn tại
+        return ResponseEntity.status(HttpStatus.CONFLICT).body("Tên đăng nhập đã tồn tại");
+    } else {
+        // Username chưa tồn tại, có thể đăng ký
+        return ResponseEntity.ok("Tên đăng nhập có thể sử dụng");
+    }
+}
 
     
 }

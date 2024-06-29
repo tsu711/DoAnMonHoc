@@ -1,0 +1,38 @@
+.text-overlay {
+    position: absolute;
+    top: 50%; /* Adjust vertically as needed */
+    left: 50%; /* Center horizontally */
+    transform: translate(-50%, -50%);
+    text-align: center;
+    z-index: 1; /* Ensure text overlay is above video */
+    color: white; /* Text color */
+  }
+  
+  .text-overlay h1 {
+    font-size: 48px; /* Example font size */
+    margin-bottom: 20px;
+  }
+  
+  .text-overlay p {
+    font-size: 18px; /* Example font size */
+    margin-bottom: 20px;
+  }
+  
+  .text-overlay a {
+    margin-right: 10px;
+    margin-bottom: 10px;
+  }
+  
+  /* Styling for buttons */
+  .text-overlay .button {
+    text-decoration: none;
+    padding: 10px 20px;
+    border: 2px solid white;
+    color: white;
+    transition: all 0.3s ease;
+  }
+  
+  .text-overlay .button:hover {
+    background-color: white;
+    color: black;
+  }

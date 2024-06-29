@@ -2,9 +2,9 @@ import React from "react";
 // import '../../assets/js/bootstrap.bundle.min.js'
 import '../../assets/js/bootstrap.bundle.min.js'
 const Slider =()=>(
-    <section class="section-main padding-y">
+  
 <main class="card">
-	<div class="card-body">
+
 
   <div id="carouselExampleIndicators" class="carousel slide" data-ride="carousel">
   <ol class="carousel-indicators">
@@ -32,12 +32,12 @@ const Slider =()=>(
 </div>
 
 
-	</div> 
+
 
 </main> 
 
 
-</section>
+
 );
 export default Slider
 

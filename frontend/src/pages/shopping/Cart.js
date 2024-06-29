@@ -1,182 +1,250 @@
-    import React, { useEffect, useState } from "react";
-    import { Link } from "react-router-dom";
-    import { useNavigate } from "react-router-dom";
+import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { updateQuanlityOrder } from "../api/apiService";
+import axios from "axios";
 
-    const Cart = () => {
-        const [products, setProducts] = useState([]);
-        const [totalPrice, setTotalPrice] = useState(0);
-    const navigative=useNavigate()
-        // Retrieve data from localStorage when the component mounts
-        useEffect(() => {
-            const storedCartItems = localStorage.getItem("cartItems") || "[]";
-            const parsedCartItems = JSON.parse(storedCartItems);
-            setProducts(parsedCartItems);
-            const calculatedTotalPrice = parsedCartItems.reduce(
-                (total, product) => total + product.price * product.quantity,
-                0
-              );
-              setTotalPrice(calculatedTotalPrice);
-        }, []); // The empty dependency array ensures this effect runs only once on mount
-        const handleRemoveCartItem = (productId) => {
-            // Filter out the item with the given productId
-            const updatedCartItems = products.filter((item) => item.id !== productId);
+const Cart = () => {
+  const [products, setProducts] = useState([]);
+  const [totalPrice, setTotalPrice] = useState(0);
+  const navigate = useNavigate();
+  const userId = localStorage.getItem("id");
 
-            // Update state and localStorage with the new cart items
-            setProducts(updatedCartItems);
-            localStorage.setItem("cartItems", JSON.stringify(updatedCartItems));
-        };
-        const handleUpdateQuantity = (productId, newQuantity) => {
-            const updatedCartItems = products.map((item) =>
-                item.id === productId ? { ...item, quantity: newQuantity } : item
-            );
+  const calculateTotalMoney = (items) => {
+    const total = items.reduce(
+      (sum, product) => sum + product.price * product.quantity,
+      0
+    );
+    setTotalPrice(total);
+  };
 
-            setProducts(updatedCartItems);
-            localStorage.setItem("cartItems", JSON.stringify(updatedCartItems));
-            window.location.reload();
-        };
+  // Lấy danh sách sản phẩm trong giỏ hàng từ API
+  const fetchCartItems = async () => {
+    try {
+      const response = await axios.get(
+        `http://localhost:8080/api/carts/users/${userId}`
+      );
+      setProducts(response.data);
+      calculateTotalMoney(response.data);
+      console.log(response);
+    } catch (error) {
+      console.error("Error fetching cart items:", error);
+    }
+  };
 
-        // Function to increase the quantity
-        const handleIncreaseQuantity = (productId, currentQuantity) => {
-            handleUpdateQuantity(productId, currentQuantity + 1);
-        };
+  useEffect(() => {
+    fetchCartItems();
+  }, []);
 
-        // Function to decrease the quantity
-        const handleDecreaseQuantity = (productId, currentQuantity) => {
-            if (currentQuantity > 1) {
-                handleUpdateQuantity(productId, currentQuantity - 1);
-            }
-        };
+  // Hàm cập nhật số lượng sản phẩm
+  const handleUpdateQuantity = async (itemEdit) => {
+    try {
+      let searchObj = {
+        userId: localStorage.getItem("id"),
+        productId: itemEdit?.product.id,
+      };
+      let formData = new FormData();
+      formData.append("newQuantity", itemEdit?.quantity);
+      const data = await updateQuanlityOrder(searchObj, formData);
+      console.log(data);
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
-        
-        const handleCheckout = () => {
-            // Thực hiện xử lý thanh toán ở đây (ví dụ: gửi đơn hàng đến server)
-            // Sau khi thanh toán thành công, cập nhật giỏ hàng và điều hướng người dùng đến trang thanh toán
-            // setCartItems([]);
-            // localStorage.removeItem("cartItems");
-            
-            navigative("/formcart"); // Điều hướng đến trang thanh toán
-        };
-        const handleContinueShopping = () => {
-            // Điều hướng người dùng về trang chủ hoặc trang sản phẩm khi nhấp vào "Continue shopping"
-            navigative("/");
-        };
-        return (
-            <section class="section-content padding-y">
-                <div class="container">
+  // Hàm xử lý khi người dùng thay đổi số lượng
+  const handleChangeQuantity = (itemData, value) => {
+    const updatedProducts = products.map((i) => {
+      if (i.cartId === itemData.cartId) {
+        i.quantity = value;
+        handleUpdateQuantity(i);
+      }
+      return i;
+    });
+    setProducts(updatedProducts);
+    calculateTotalMoney(updatedProducts);
+  };
 
-                    <div class="row">
-                        <main class="col-md-9">
-                            <div class="card">
-                                {products.length > 0 &&
-                                    products.map((row) => (<table class="table table-borderless table-shopping-cart">
-                                        <thead class="text-muted">
-                                            <tr class="small text-uppercase">
-                                                <th scope="col">Product</th>
-                                                <th scope="col" width="120">Quantity</th>
-                                                <th scope="col" width="120">Price</th>
-                                                <th scope="col" class="text-right" width="200"> </th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-    <tr>
-                                                <td>
-                                                    <figure class="itemside">
-                                                        <div class="aside">
-                                                        <img src={`../images/items/${row.thumbnail}`} style={{width:"100px"}} />
-                                                            </div>
-                                                        <figcaption class="info">
-                                                            <a href="#" class="title text-dark">{row.title}</a>
-                                                            
-                                                        </figcaption>
-                                                    </figure>
-                                                </td>
-                                                <td>
-                                                    <div class="quantity-control">
-                                                        <button
-                                                            onClick={() => handleDecreaseQuantity(row.id, row.quantity)}
-                                                            class="btn btn-outline-secondary btn-sm"
-                                                        >
-                                                            -
-                                                        </button>
-                                                        <span class="quantity">{row.quantity}</span>
-                                                        <button
-                                                            onClick={() => handleIncreaseQuantity(row.id, row.quantity)}
-                                                            class="btn btn-outline-secondary btn-sm"
-                                                        >
-                                                            +
-                                                        </button>
-                                                    </div>
-                                                </td>
+  // Hàm xóa sản phẩm khỏi giỏ hàng
+  const handleRemoveCartItem = async (value) => {
+    try {
+      await axios.delete(`http://localhost:8080/api/carts/${value.cartId}`);
+      window.location.reload();
+    } catch (error) {
+      console.error("Error removing cart item:", error);
+    }
+  };
 
-                                                <td>
-                                                    <div class="price-wrap">
-                                                        <var class="price">${row.price * row.quantity}</var>
-                                                        <small class="text-muted"> ${row.price} each </small>
-                                                    </div>
-                                                </td>
-                                                <td class="text-right">
-                                                    <a data-original-title="Save to Wishlist" title="" href="" class="btn btn-info" data-toggle="tooltip"> <i class="fa fa-heart"></i></a>
-                                                    <a href="" class="btn btn-light" onClick={() => handleRemoveCartItem(row.id)}> Remove</a>
-                                                </td>
-                                            </tr>
-                                        </tbody>
-                                    </table>
-    ))}
-                            <div className="card-body border-top">
-                            {products.length > 0 && (
-                    <Link to="/formcart" className="btn btn-info float-md-right" onClick={handleCheckout}>
-                    Mua hàng <i className="fa fa-chevron-right"></i>
-                    </Link>
-                )}
-                    <button className="btn btn-light" onClick={handleContinueShopping}>
-                    <i className="fa fa-chevron-left"></i> Continue shopping
+  const handleCheckout = () => {
+    const token = localStorage.getItem("token");
+    if (!token) {
+      alert("Bạn cần đăng nhập để tiếp tục.");
+      navigate("/login");
+      return;
+    }
+    navigate("/formcart");
+  };
+
+  const handleContinueShopping = () => {
+    navigate("/");
+  };
+
+  const formatPrice = (price) => {
+    return new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(price);
+  };
+
+  return (
+    <section className="section-content padding-y">
+      <div className="container align-items: center;">
+        <div className="item">
+          <main className="col-md-9">
+            <div className="card">
+              {products.length > 0 ? (
+                <>
+                  {products.map((item) => (
+                    <table
+                      className="table table-borderless table-shopping-cart"
+                      key={item.product.id}
+                    >
+                      <thead className="text-muted">
+                        <tr className="small text-uppercase">
+                          <th scope="col">Sản phẩm</th>
+                          <th scope="col" width="120">
+                            Số lượng
+                          </th>
+                          <th scope="col" width="120">
+                            Giá
+                          </th>
+                          <th scope="col" className="text-right" width="200">
+                            {" "}
+                          </th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr>
+                          <td>
+                            <figure className="itemside">
+                              <div className="aside">
+                                <img
+                                  src={`../images/items/${item.product.thumbnail}`}
+                                  style={{ width: "100px" }}
+                                  alt={item.title}
+                                />
+                              </div>
+                              <figcaption className="info">
+                                <a href="#" className="title text-dark">
+                                  {item.product.title}
+                                </a>
+                                <p>Màu: {item.color ? item.color.name : "-"}</p>
+                                <p>
+                                  Kích cỡ: {item.size ? item.size.name : "-"}
+                                </p>
+                              </figcaption>
+                            </figure>
+                          </td>
+                          <td className="product_quantity">
+                            <input
+                              className="form-control"
+                              min="1"
+                              max="5"
+                              value={item?.quantity}
+                              type="number"
+                              onChange={(e) =>
+                                handleChangeQuantity(item, e.target.value)
+                              }
+                            />
+                          </td>
+                          <td>
+                            <div className="price-wrap">
+                              <div className="price">
+                                {formatPrice(item.product.price * item.quantity)}
+                              </div>
+                            </div>
+                          </td>
+                          <td className="text-right">
+                            <button
+                              className="btn btn-light"
+                              onClick={() => handleRemoveCartItem(item)}
+                            >
+                              {" "}
+                              Xóa
+                            </button>
+                          </td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  ))}
+                  <div className="card-body border-top">
+                    <button
+                      className="btn btn-info float-md-right"
+                      onClick={handleCheckout}
+                    >
+                      Mua hàng <i className="fa fa-chevron-right"></i>
                     </button>
+                    <button
+                      className="btn btn-light"
+                      onClick={handleContinueShopping}
+                    >
+                      <i className="fa fa-chevron-left"></i> Tiếp tục mua sắm
+                    </button>
+                  </div>
+                </>
+              ) : (
+                <div className="card-body">
+                  <p>Giỏ hàng của bạn trống</p>
+                  <button
+                    className="btn btn-light"
+                    onClick={handleContinueShopping}
+                  >
+                    <i className="fa fa-chevron-left"></i> Tiếp tục mua sắm
+                  </button>
                 </div>
-                            </div>
-
-                            <div class="alert alert-success mt-3">
-                                <p class="icontext"><i class="icon text-success fa fa-truck"></i> Free Delivery within 1-2 weeks</p>
-                            </div>
-
-                        </main>
-                        <aside class="col-md-3">
-                            <div class="card mb-3">
-                                <div class="card-body">
-                                    <form>
-                                        <div class="form-group">
-                                            <label>Have coupon?</label>
-                                            <div class="input-group">
-                                                <input type="text" class="form-control" name="" placeholder="Coupon code" />
-                                                <span class="input-group-append">
-                                                    <button class="btn btn-info">Apply</button>
-                                                </span>
-                                            </div>
-                                        </div>
-                                    </form>
-                                </div>
-                            </div>
-                            <div class="card">
-                                <div class="card-body">
-                                    <dl class="dlist-align">
-                                        <dt>Total price:</dt>
-                                        <dd class="text-right">${totalPrice}</dd>
-                                    </dl>
-                                    <dl class="dlist-align">
-                                        <dt>Discount:</dt>
-                                        <dd class="text-right">$0</dd>
-                                    </dl>
-                                
-
-                                  
-
-                                </div>
-                            </div>
-                        </aside>
+              )}
+            </div>
+            <div className="alert alert-success mt-3">
+              <p className="icontext">
+                <i className="icon text-success fa fa-truck"></i> Giao hàng miễn
+                phí trong 1-2 tuần
+              </p>
+            </div>
+          </main>
+          {/* <aside className="col-md-3">
+            <div className="card mb-3">
+              <div className="card-body">
+                <form>
+                  <div className="form-group">
+                    <label>Có mã giảm giá?</label>
+                    <div className="input-group">
+                      <input
+                        type="text"
+                        className="form-control"
+                        name=""
+                        placeholder="Mã giảm giá"
+                      />
+                      <span className="input-group-append">
+                        <button className="btn btn-info">Áp dụng</button>
+                      </span>
                     </div>
+                  </div>
+                </form>
+              </div>
+            </div>*/}
+            <div className="card">
+              <div className="card-body">
+                <dl className="dlist-align">
+                  <dt>Tổng giá:</dt>
+                  <dd className="text-right">{totalPrice}</dd>
+                </dl>
+                {/* <dl className="dlist-align">
+                  <dt>Giảm giá:</dt>
+                  <dd className="text-right">$0</dd>
+                </dl> */}
+              </div>
+            </div>
+          
+        </div>
+      </div>
+    </section>
+  );
+};
 
-                </div>
-            </section>)
-
-    };
-
-    export default Cart
+export default Cart;

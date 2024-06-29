@@ -12,4 +12,12 @@ public void deleteProduct(Long ProductId);
 // public List<Product> getProductsByCondition(String title, Long category);
 public List<Product> getLatestProductsInCategory(Long categoryId, int pageSize);
 public Page<Product> getProductsByCategoryId(Long categoryId, Pageable pageable);
+public Page<Product> getProductsByPriceRange( String sortOption,int minPrice, int maxPrice, Pageable pageable);
+
+// public List<Product> searchProductsByTitle(String title);
+public List<Product> searchProductsByTitle(String title);
+
+
+
+public List<Product> getAllProducts();
 }

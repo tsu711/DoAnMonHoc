@@ -18,7 +18,7 @@ export  const listCategory = (props) =>(
     <List {...props} sortBy="id" sortOrder="ASC">
         <Datagrid>
             <TextField source ="id"/>
-            <TextField source ="name"/>
+            <TextField source ="categoryName"/>
             <TextField source ="isHome"/>
             <EditButton/>
         </Datagrid>
@@ -31,7 +31,7 @@ export  const editCategory = (props) =>(
     
     <Edit {...props}>
     <SimpleForm>
-      <TextInput source="name" validate={required()} /> {/* Áp dụng ràng buộc */}
+      <TextInput source="categoryName" validate={required()} /> {/* Áp dụng ràng buộc */}
       <SelectInput
         source="isHome"
         choices={[

@@ -13,6 +13,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+
 // import com.fasterxml.jackson.annotation.JsonIgnore;
 @Getter
 @Setter
@@ -20,30 +21,28 @@ import lombok.Setter;
 @AllArgsConstructor
 @Entity
 
-
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     private String fullname;
+    private String username;
     private String password;
-   private String email;
-   private String phone_number;
-   private String address;
+    private String email;
+    private String phone_number;
+    private String address;
 
-   private Date created_at;
-   private Date update_at;
-   private int  deleted;
+    private Date created_at;
+    private Date update_at;
+    private int deleted;
 
-   @ManyToOne
-   private Role role;
+    @ManyToOne
+    private Role role;
 
-   @OneToMany(mappedBy = "user")
-   private List<Token> token;
+    @OneToMany(mappedBy = "user")
+    private List<Token> token;
 
     //
 
-
-    
 }

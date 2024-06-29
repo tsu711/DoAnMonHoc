@@ -11,6 +11,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.http.ResponseEntity;
 @Service
 @AllArgsConstructor
 public class ProductServiceImpl implements ProductService {
@@ -51,9 +52,10 @@ public class ProductServiceImpl implements ProductService {
         existingProduct.setPrice(Product.getPrice());
         existingProduct.setDiscount(Product.getDiscount());
         existingProduct.setThumbnail(Product.getThumbnail());
+        existingProduct.setQuantity(Product.getQuantity());
         existingProduct.setDescription(Product.getDescription());
-
-        existingProduct.setCreated_at(Product.getCreated_at());
+        existingProduct.setColors(Product.getColors());
+        existingProduct.setSizes(Product.getSizes());
         existingProduct.setUpdated_at(Product.getUpdated_at());
         existingProduct.setDeleted(Product.getDeleted());
         existingProduct.setCategory(Product.getCategory());
@@ -84,5 +86,25 @@ public interface ProductService {
     @Override
     public Page<Product> getProductsByCategoryId(Long categoryId, Pageable pageable) {
     return productRepository.findProductsByCategoryId(categoryId, pageable);
+    }
+
+     // Method to get products by price range with pagination and sorting
+     @Override
+    public Page<Product> getProductsByPriceRange(String sortOption, int minPrice, int maxPrice, Pageable pageable) {
+        // Implementation to get products by price range with optional sorting
+        if ("price-asc".equals(sortOption)) {
+            return productRepository.findProductsByPriceAsc(minPrice, maxPrice, pageable);
+        } else if ("price-desc".equals(sortOption)) {
+            return productRepository.findProductsByPriceDesc(minPrice, maxPrice, pageable);
+        } else {
+            return productRepository.findByPriceBetween(minPrice, maxPrice, pageable);
+        }
+    }
+    
+      public List<Product> searchProductsByTitle(String title) {
+        return productRepository.findByTitleContainingIgnoreCase(title);
+    }
+    public List<Product> getAllProducts() {
+        return productRepository.findAll();
     }
 }

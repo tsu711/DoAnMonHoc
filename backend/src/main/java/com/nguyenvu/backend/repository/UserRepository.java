@@ -14,6 +14,7 @@ import com.nguyenvu.backend.entity.User;
 
 
 public interface UserRepository extends JpaRepository<User, Long> {
-    Optional<User> findByFullnameAndPassword(String fullname, String password);
+    Optional<User> findByUsernameAndPassword(String username, String password);
+    Optional<User> findByUsername(String username);
 }
 

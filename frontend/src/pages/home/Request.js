@@ -1,62 +1,27 @@
 import React from "react";
 const Requests = () =>(
-<section class="padding-bottom">
-
-<header class="section-heading heading-line">
-	<h4 class="title-section text-uppercase">Request for Quotation</h4>
-</header>
-
-<div class="row">
-	<div class="col-md-8">
-<div class="card-banner banner-quote overlay-gradient">
-  <div class="card-img-overlay white">
-    <h3 class="card-title">An easy way to send request to suppliers</h3>
-    <p class="card-text" >Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod
-    tempor incididunt.</p>
-    <a href="" class="btn btn-primary rounded-pill">Learn more</a>
-  </div>
-</div>
-	</div> 
-	<div class="col-md-4">
-
-<div class="card card-body">
-	<h4 class="title py-3">One Request, Multiple Quotes</h4>
-	<form>
-		<div class="form-group">
-			<input class="form-control" name="" placeholder="What are you looking for?" type="text"/>
-		</div>
-		<div class="form-group">
-			<div class="input-group">
-				<input class="form-control" placeholder="Quantity" name="" type="text"/>
-				
-				<select class="custom-select form-control">
-					<option>Pieces</option>
-					<option>Litres</option>
-					<option>Tons</option>
-					<option>Gramms</option>
-				</select>
-			</div>
-		</div>
-		<div class="form-group text-muted">
-			<p>Select template type:</p>
-			<label class="form-check form-check-inline">
-			  <input class="form-check-input" type="checkbox" value="option1"/>
-			   <span class="form-check-label">Request price</span>
-			</label>
-			<label class="form-check form-check-inline">
-			  <input class="form-check-input" type="checkbox" value="option2"/>
-			  <span class="form-check-label">Request a sample</span>
-			</label>
-		</div>
-		<div class="form-group">
-			<button class="btn btn-warning">Request for quote</button>
-		</div>
-	</form>
-</div>
-
-	</div> 
-</div> 
-</section>
+<div class="container-fluid offer pt-5">
+        <div class="row px-xl-5">
+            <div class="col-md-6 pb-4">
+                <div class="position-relative bg-secondary text-center text-md-right text-white mb-2 py-5 px-5">
+				<img src={require("../../assets/images/items/aomixi1-1.jpg")}style={{width:"100%"}}/>                 <div class="position-relative" style={{zIndex:"1"}}>
+                        <h5 class="text-uppercase text-primary mb-3">•Chất liệu: Vải pima cotton 100%, dày dặn, mịn mát</h5>
+                        <h1 class="mb-4 font-weight-semi-bold">Summer Collection</h1>
+                        {/* <a href="" class="btn btn-outline-primary py-md-2 px-md-3">Shop Now</a> */}
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6 pb-4">
+                <div class="position-relative bg-secondary text-center text-md-left text-white mb-2 py-5 px-5">
+				<img src={require("../../assets/images/items/aomixi1-2.jpg")}style={{width:"100%"}}/>        <div class="position-relative" style={{zIndex:"1"}}>
+                        <h5 class="text-uppercase text-primary mb-3">•In decal cao thành với zip cổ siêu mượt🤝</h5>
+                        <h1 class="mb-4 font-weight-semi-bold">Winter Collection</h1>
+                        {/* <a href="" class="btn btn-outline-primary py-md-2 px-md-3">Shop Now</a> */}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 
 );
 export default Requests

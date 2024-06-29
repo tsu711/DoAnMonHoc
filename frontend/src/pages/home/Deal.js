@@ -1,80 +1,93 @@
-import React from "react";
-const Deal = () =>(
-<section class ="padding-bottom">
-<section class="padding-bottom">
- <div class="card card-deal">
-     <div class="col-heading content-body">
-      <header class="section-heading">
-       <h3 class="section-title">Deals and offers</h3>
-       <p>Hygiene equipments</p>
-     </header>
-     <div class="timer">
-       <div> <span class="num">04</span> <small>Days</small></div>
-       <div> <span class="num">12</span> <small>Hours</small></div>
-       <div> <span class="num">58</span> <small>Min</small></div>
-       <div> <span class="num">02</span> <small>Sec</small></div>
-     </div>
-   </div> 
-   <div class="row no-gutters items-wrap">
-    <div class="col-md col-6">
-     <figure class="card-product-grid card-sm">
-      <a href="#" class="img-wrap"> 
-      <img src={require("../../assets/images/items/aorefund.jpg")}style={{width:"60%"}}/>
-      </a>
-      <div class="text-wrap p-3">
-       	<a href="#" class="title">Áo Refund gaming</a>
-       	<span class="badge badge-danger"> -20% </span>
-      </div>
-   </figure>
- </div> 
- <div class="col-md col-6">
-   <figure class="card-product-grid card-sm">
-    <a href="#" class="img-wrap"> 
-    <img src={require("../../assets/images/items/aomixi1.jpg")}style={{width:"60%"}}/>
-   </a>
-   <div class="text-wrap p-3">
-     <a href="#" class="title">Áo Mixi</a>
-     <span class="badge badge-danger"> -5% </span>
-   </div>
- </figure>
-</div> 
-<div class="col-md col-6">
- <figure class="card-product-grid card-sm">
-  <a href="#" class="img-wrap"> 
-  <img src={require("../../assets/images/items/hodiemixi1.jpg")}style={{width:"60%"}}/>
- </a>
- <div class="text-wrap p-3">
-   <a href="#" class="title">Hodie Mixi</a>
-   <span class="badge badge-danger"> -20% </span>
- </div>
-</figure>
-</div> 
-<div class="col-md col-6">
- <figure class="card-product-grid card-sm">
-  <a href="#" class="img-wrap"> 
-  <img src={require("../../assets/images/items/aopubg1.jpg")}style={{width:"60%"}}/>
- </a>
- <div class="text-wrap p-3">
-   <a href="#" class="title">Áo PUBG</a>
-   <span class="badge badge-danger"> -15% </span>
- </div>
-</figure>
-</div> 
-<div class="col-md col-6">
- <figure class="card-product-grid card-sm">
-  <a href="#" class="img-wrap"> 
-  <img src={require("../../assets/images/items/aocsgo1.jpg")}style={{width:"60%"}}/>
- </a>
- <div class="text-wrap p-3">
-   <a href="#" class="title text-truncate">Áo CSGO</a>
-   <span class="badge badge-danger"> -10% </span>
- </div>
-</figure>
-</div> 
-</div>
-</div>
+import React, { useEffect, useState } from "react";
+import { GET_ALL } from "../api/apiService";
+import { Link } from "react-router-dom";
 
-</section>
-</section>
-);
-export default Deal
+const Mixi = () => {
+  const [categories, setCategories] = useState([]);
+  const [products, setProducts] = useState([]);
+
+  useEffect(() => {
+    // Fetch products with category_id = 1
+    GET_ALL(`products/getlatest?categoryid=4`).then((item) =>
+      setProducts(item.data)
+    );
+    // Fetch all categories
+    GET_ALL(`categories`).then((item) => setCategories(item.data));
+  }, []);
+  const handleProductClick = (productId) => {
+    window.location.href = `/detailProduct?productId=${productId}`;
+  };
+
+  return (
+    <section className="padding-y">
+      <div className="text-center mb-4">
+        <h2 className="section-title px-5">
+          <h3 className="title-section">
+            {categories.length > 0 ? categories[3].categoryName : ""}
+          </h3>
+        </h2>
+      </div>
+      <div className="container">
+        <div className="card card-home-category">
+          <div className="row no-gutters">
+            <div className="col-md">
+              <ul className="row no-gutters bordered-cols">
+                {products.length > 0 ? (
+                  products.map((product) => (
+                    <li className="col-6 col-lg-3 col-md-4" key={product.id}>
+                      <div>
+                        <div
+                          onClick={() => handleProductClick(product.id)}
+                          style={{ cursor: "pointer" }}
+                          className="item"
+                        >
+                          <div className="card-body">
+                            <h6 className="text-truncate mb-3">
+                              {product.title}
+                            </h6>
+                            <img
+                              src={require(`../../assets/images/items/${product.thumbnail}`)}
+                              style={{ width: "100%" }}
+                              alt={product.title}
+                              className="img-fluid"
+                            />
+                            <div className="price h5 mt-2">
+                              ${product.price}
+                            </div>
+                          </div>
+                        </div>
+                        <div className="card-footer d-flex justify-content-between bg-light border mt-2">
+                          <button
+                            className="btn btn-sm text-dark p-0"
+                            onClick={() => handleProductClick(product.id)}
+                          >
+                            <i className="fas fa-eye text-primary mr-1"></i>View
+                            Detail
+                          </button>
+                          <a href="" className="btn btn-sm text-dark p-0">
+                            <i className="fas fa-shopping-cart text-primary mr-1"></i>
+                            Add To Cart
+                          </a>
+                        </div>
+                      </div>
+                    </li>
+                  ))
+                ) : (
+                  <p>No products found for this category.</p>
+                )}
+              </ul>
+            </div>
+          </div>
+        </div>
+        <Link
+          to="/listing?categoryId=1"
+          className="btn btn-primary float-md-right"
+        >
+          Xem thêm
+        </Link>
+      </div>
+    </section>
+  );
+};
+
+export default Mixi;

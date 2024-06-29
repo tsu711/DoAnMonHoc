@@ -3,6 +3,8 @@ import {Routes,Route,Link} from 'react-router-dom';
 import Home from "./Home";
 import DetailProduct from "./DetailProduct";
 import Listing from "./Listing";
+import ListingSortDesc from "../pages/listing/ListingSortProductsDesc";
+import ListingSortAsc from "../pages/listing/ListingSortProductsAsc";
 import Payment from "./Payment";
 import ProfileWishlist from "./ProfileWishlist";
 import ProfileOrder from "./ProfileOrder";
@@ -27,6 +29,8 @@ const Main = () =>(
             <Route path="/"element={<Home/>}/>
             <Route path="/detailProduct"element={<DetailProduct/>}/>
             <Route path="/listing"element={<Listing/>}/>
+            <Route path="/listingSortDesc"element={<ListingSortDesc/>}/>
+            <Route path="/listingSortAsc"element={<ListingSortAsc/>}/>
             <Route path="/payment"element={<Payment/>}/>
             <Route path="/profile/wishlist"element={<ProfileWishlist/>}/>
             <Route path="/profile/order"element={<ProfileOrder/>}/>

@@ -16,7 +16,8 @@ const MenuList = () => {
   }, []);
 
   return (
-    <div className="navbar-nav">
+    <div class="navbar-nav mr-auto py-0">
+      
       {menus.map(menu => (
         <Menu key={menu.id} menu={menu} />
       ))}

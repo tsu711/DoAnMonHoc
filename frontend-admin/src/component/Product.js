@@ -12,6 +12,8 @@ DateInput,
 Create,
 ReferenceInput,
 SelectInput,
+ReferenceField,
+SelectField,
 } from "react-admin";
 export const listProduct = (props) => (
 <List {...props} sortBy="id" sortOrder="ASC">
@@ -21,10 +23,12 @@ export const listProduct = (props) => (
 <TextField source="price" />
 <TextField source="discount" />
 <TextField source="thumbnail" />
-<TextField source="description" />
+<TextField source="quantity" />
 <TextField source="created_at" />
 <TextField source="updated_at" />
-<TextField source="category.name" />
+<ReferenceField label="Category" source="category.id" reference="categories">
+        <TextField source="categoryName" />
+      </ReferenceField>
 <EditButton />
 </Datagrid>
 </List>
@@ -36,16 +40,16 @@ export const editProduct = (props) => (
     <NumberInput source="price" />
 <NumberInput source="discount" />
 <TextInput source="thumbnail" />
+<TextInput source="quantity" />
 <TextInput source="description" multiline fullWidth />
 <DateInput source="created_at" />
 <DateInput source="updated_at" />
-<NumberInput source="deleted" />
 <ReferenceInput
 label="Category"
 source="category.id"
 reference="categories"
 >
-<SelectInput optionText="name" />
+<SelectInput optionText="categoryName" />
 </ReferenceInput>
 </SimpleForm>
 </Edit>
@@ -58,15 +62,15 @@ export const createProduct = (props) => (
     <NumberInput source="price" />
     <NumberInput source="discount" />
     <TextInput source="thumbnail" />
+    <TextInput source="quantity" />
     <TextInput source="description" multiline fullWidth />
     <DateInput source="created_at" />
     <DateInput source="updated_at" />
-    <NumberInput source="deleted" />
     <ReferenceInput
     label="Category"
     source="category.id"
     reference="categories">
-<SelectInput optionText="name" />
+<SelectInput optionText="categoryName" />
 </ReferenceInput>
 </SimpleForm>
 </Create>

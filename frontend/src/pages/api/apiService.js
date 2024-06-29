@@ -22,6 +22,11 @@ export function GET_PAGE(endpoint, page = 0, size = 10, categoryId = null) {
 
   return callApi(url, "GET");
 }
+
+export function GET_SORT_PAGE(endpoint, page = 0, size = 10) {
+  let url = `${endpoint}&page=${page}&size=${size}`;
+  return callApi(url, "GET");
+}
 export function GET_ID(endpoint, id) {
   return callApi(endpoint + "/" + id, "GET");
 }
@@ -37,7 +42,20 @@ export function DELETE_PRODUCT(endpoint) {
 export function POST_ADD(endpoint, data) {
   return callApi(endpoint, "POST", data);
 }
+export const updateQuanlityOrder = (payload, quantity) => {
+  return axios.put(
+    API_URL +
+      "/carts/" +
+      payload?.userId +
+      "/products/" +
+      payload?.productId,
+    quantity
+  );
+};
 
 export function PUT_EDIT_CATEGORY(endpoint, data) {
   return callApi(endpoint, "PUT", data);
 }
+export const GET_PRODUCTS_BY_PRICE = (minPrice, maxPrice) => {
+  return axios.get(`/products/by-price?minPrice=${minPrice}&maxPrice=${maxPrice}`);
+};

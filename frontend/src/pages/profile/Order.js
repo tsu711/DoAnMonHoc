@@ -1,22 +1,31 @@
 import axios from "axios";
 import React, { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 
 const Order = () => {
- 
   const [orders, setOrders] = useState([]);
-
- 
+  const userId = localStorage.getItem("id");
 
   useEffect(() => {
     axios
-      .get("http://localhost:8080/api/orders")
+      .get(`http://localhost:8080/api/orders/users/${userId}`)
       .then((response) => {
         setOrders(response.data);
+        console.log(response)
       })
       .catch((error) => {
-        console.error("Lấy danh sách đơn hàng thất bại:", error);
+        console.error("Không thể lấy đơn hàng:", error);
       });
-  }, []);
+  }, [userId]);
+
+  const handleRemoveCartItem = async (orderId) => {
+    try {
+      await axios.delete(`http://localhost:8080/api/orders/${orderId}`);
+      setOrders(orders.filter(order => order.id !== orderId));
+    } catch (error) {
+      console.error("Không thể hủy đơn hàng:", error);
+    }
+  };
 
   return (
     <section className="section-content padding-y">
@@ -24,106 +33,72 @@ const Order = () => {
         <div className="row">
           <aside className="col-md-3">
             <nav className="list-group">
-              <a className="list-group-item" href="/profile/main">
-                {" "}
-                Account overview{" "}
-              </a>
-              <a className="list-group-item" href="/profile/address">
-                {" "}
-                My Address{" "}
-              </a>
-              <a className="list-group-item active" href="/profile/order">
-                {" "}
-                My Orders{" "}
-              </a>
-              <a className="list-group-item" href="/profile/wishlist">
-                {" "}
-                My wishlist{" "}
-              </a>
-              <a className="list-group-item" href="/profile/seller">
-                {" "}
-                My Selling Items{" "}
-              </a>
-              <a className="list-group-item" href="/profile/setting">
-                {" "}
-                Settings{" "}
-              </a>
-            
+              {/* <a className="list-group-item" href="/profile/main">Tổng quan tài khoản</a>
+              <a className="list-group-item" href="/profile/address">Địa chỉ của tôi</a> */}
+              <a className="list-group-item active" href="/profile/order">Đơn hàng của tôi</a>
+              {/* <a className="list-group-item" href="/profile/wishlist">Danh sách yêu thích</a>
+              <a className="list-group-item" href="/profile/seller">Sản phẩm đang bán</a>
+              <a className="list-group-item" href="/profile/setting">Cài đặt</a> */}
             </nav>
           </aside>
           <main className="col-md-9">
-              {orders.map((row) => (
-                  
-                    <article className="card mb-4">
-              <div className="card-body">
-                
-                   <div>
-                    
-                  <div className="row">
-                    <div className="col-md-8">
-                      <h6 className="text-muted">Delivery to</h6>
-                      <p>
-                        Name: {row.fullname} </p>
-                        <p> Phone: {row.phone_number}</p>
-                        <p>  Email: {row.email}</p>
-                        <p> Location: {row.address}</p>
-                    </div>
-                    <div className="col-md-4">
-                      <h6 className="text-muted">Payment</h6>
-                      <span className="text-success">
-                        <i className="fab fa-lg fa-cc-visa"></i>
-                        Visa **** 4216
-                      </span>
-                      <p class="price text-muted">
-                       USD {row.total_money}
-                      </p>
-                    </div>
-                  </div>
-                  <tr>
-                      <td width="65">
-                      <img src={`../images/items/${row.thumbnail}`} style={{width:"100px"}} />
-                      </td>
-                      <td>
-                        <p class="title mb-0">Product name goes here </p>
+            {orders.length === 0 ? (
+              <p>Không có đơn hàng nào.</p>
+            ) : (
+              orders.map((row) => (
+                <article key={row.id} className="card mb-4">
+                  <div className="card-body">
+                    <div className="row">
+                      <div className="col-md-8">
+                        <h6 className="text-muted">Giao hàng đến</h6>
+                        <p>Họ và tên: {row.fullname}</p>
+                        <p>Số điện thoại: {row.phoneNumber}</p>
+                        <p>Email: {row.email}</p>
+                        <p>Địa chỉ: {row.address}</p>
+                      </div>
+                      <div className="col-md-4">
+                        <h6 className="text-muted">Phương thức thanh toán: {row.paymentMethod}</h6>
                         
-                      </td>
-                      <td> Seller Nike clothing </td>
-                      <td width="250">
-                        {" "}
-                        <a href="/profile/orderDetails" class="btn btn-outline-primary">
-                          Track order
-                        </a>
-                        <div class="dropdown d-inline-block">
-                          <a
-                            href="#"
+                        
+                        {/* <span className="text-success">
+                          <i className="fab fa-lg fa-cc-visa"></i> Visa **** 4216
+                        </span> */}
+                        <p className="price text-muted">{row.totalMoney} <span className="text-muted">VNĐ</span></p>
+                      </div>
+                    </div>
+                    <div className="row">
+                      <div className="col-md-5">
+                        <p>Trạng thái: {row.status}</p>
+                        <Link to={`/profile/orderDetails?orderId=${row.id}`} className="btn btn-outline-primary">
+                          Chi tiết
+                        </Link>
+                        <div className="dropdown d-inline-block">
+                          <button
+                            className="btn btn-outline-secondary dropdown-toggle"
+                            type="button"
+                            id="dropdownMenuButton"
                             data-toggle="dropdown"
-                            class="dropdown-toggle btn btn-outline-secondary"
+                            aria-haspopup="true"
+                            aria-expanded="false"
                           >
-                            More
-                          </a>
-                          <div class="dropdown-menu dropdown-menu-right">
-                            <a href="#" class="dropdown-item">
-                              Return
-                            </a>
-                            <a href="#" class="dropdown-item">
-                              Cancel order
-                            </a>
+                            Sửa
+                          </button>
+                          <div className="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                            <button
+                              className="dropdown-item"
+                              onClick={() => handleRemoveCartItem(row.id)}
+                            >
+                              Hủy đơn hàng
+                            </button>
                           </div>
                         </div>
-                      </td>
-                    </tr>
+                      </div>
+                    </div>
                   </div>
-           
-              </div>
-              </article>
-     
-
-))}
-               
-               </main>   
-                
-              
-           
+                </article>
+              ))
+            )}
+          </main>
         </div>
       </div>
     </section>

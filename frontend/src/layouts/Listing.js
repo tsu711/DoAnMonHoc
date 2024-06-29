@@ -1,5 +1,5 @@
 import React from "react";
-import FilterTop from "../pages/listing/FilterTop";
+import ListingProducts from "../pages/listing/ListingProducts";
 
 
 
@@ -7,7 +7,7 @@ import FilterTop from "../pages/listing/FilterTop";
 const Listing = () =>(
     <>
     <div class="container">
-        <FilterTop/>
+        <ListingProducts/>
         
     </div>
    

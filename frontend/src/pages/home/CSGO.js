@@ -1,101 +1,85 @@
-import React from "react";
-const CSGO = () =>(
-<section class="padding-bottom">
-<header class="section-heading heading-line">
-	<h4 class="title-section text-uppercase">CSGO</h4>
-</header>
+import React, { useEffect, useState } from "react";
+import { GET_ALL } from "../api/apiService";
+import { Link } from "react-router-dom";
 
-<div class="card card-home-category">
-<div class="row no-gutters">
-	<div class="col-md-3">
-	
-	<div class="home-category-banner bg-light-orange">
-		<h5 class="title">Áo CSGO</h5>
-		<p>Áo thun đen LOGO CSGO</p>
-		<a href="#" class="btn btn-outline-primary rounded-pill">Source now</a>
-		<img src={require("../../assets/images/items/aocsgo1.jpg")}style={{width:"80%"}}/>
-	</div>
+const Mixi = () => {
+  const [categories, setCategories] = useState([]);
+  const [products, setProducts] = useState([]);
 
-	</div> 
-	<div class="col-md-9">
-<ul class="row no-gutters bordered-cols">
-	<li class="col-6 col-lg-3 col-md-4">
-<a href="#" class="item"> 
-	<div class="card-body">
-		<h6 class="title">Áo thun đen CSGO C06  </h6>
-		<img src={require("../../assets/images/items/aocsgo2.jpg")}style={{width:"80%"}}/>
-		
-	</div>
-</a>
-	</li>
-	<li class="col-6 col-lg-3 col-md-4">
-<a href="#" class="item"> 
-	<div class="card-body">
-		<h6 class="title">Áo thun đen CSGO AK rush B C05</h6>
-		<img src={require("../../assets/images/items/aocsgo3.jpg")}style={{width:"80%"}}/>
-		
-	</div>
-</a>
-	</li>
-	<li class="col-6 col-lg-3 col-md-4">
-<a href="#" class="item"> 
-	<div class="card-body">
-		<h6 class="title">Áo thun đen CSGO cykablat C04</h6>
-		<img src={require("../../assets/images/items/aocsgo4.jpg")}style={{width:"80%"}}/> 
-	
-	</div>
-</a>
-	</li>
-	<li class="col-6 col-lg-3 col-md-4">
-<a href="#" class="item"> 
-	<div class="card-body">
-		<h6 class="title">Áo thun đen CSGO smoke Mid C03</h6>
-		<img src={require("../../assets/images/items/aocsgo5.jpg")}style={{width:"80%"}}/>
-	
-	</div>
-</a>	
-	</li>
-	<li class="col-6 col-lg-3 col-md-4">
-<a href="#" class="item"> 
-	<div class="card-body">
-		<h6 class="title">Áo thun đen CSGO rush B C02</h6>
-		<img src={require("../../assets/images/items/aocsgo6.jpg")}style={{width:"80%"}}/> 
-		
-	</div>
-</a>
-	</li>
-	<li class="col-6 col-lg-3 col-md-4">
-<a href="#" class="item"> 
-	<div class="card-body">
-		<h6 class="title">Áo thun đen CSGO cykablat C04</h6>
-		<img src={require("../../assets/images/items/aocsgo7.jpg")}style={{width:"80%"}}/> 
-	
-	</div>
-</a>
-	</li>
-	<li class="col-6 col-lg-3 col-md-4">
-<a href="#" class="item"> 
-	<div class="card-body">
-		<h6 class="title">Áo thun đen CSGO Moly Holly C01</h6>
-		<img src={require("../../assets/images/items/aocsgo1.jpg")}style={{width:"80%"}}/>
-		
+  useEffect(() => {
+    // Fetch products with category_id = 1
+    GET_ALL(`products/getlatest?categoryid=3`).then((item) =>
+      setProducts(item.data)
+    );
+    // Fetch all categories
+    GET_ALL(`categories`).then((item) => setCategories(item.data));
+  }, []);
 
-	</div>
-</a>
-	</li>
-	<li class="col-6 col-lg-3 col-md-4">
-<a href="#" class="item"> 
-	<div class="card-body">
-		<h6 class="title">Áo thun đen CSGO C06</h6>
-		<img src={require("../../assets/images/items/aocsgo2.jpg")}style={{width:"80%"}}/>
+  return (
+    <section className="padding-y">
+      <div className="text-center mb-4">
+        <h2 className="section-title px-5">
+          <h3 className="title-section">
+            {categories.length > 0 ? categories[2].categoryName : ""}
+          </h3>
+        </h2>
+      </div>
+      <div className="container">
+        <div className="card card-home-category">
+          <div className="row no-gutters">
+            <div className="col-md">
+              <ul className="row no-gutters bordered-cols">
+                {products.length > 0 ? (
+                  products.map((product) => (
+                    <li className="col-6 col-lg-3 col-md-4" key={product.id}>
+                      <Link
+                        to={`/detailProduct?productId=${product.id}`}
+                        className="item"
+                      >
+                        <div className="card-body">
+						<h6 className="text-truncate mb-3">{product.title}</h6>
+                          <img
+                            src={require(`../../assets/images/items/${product.thumbnail}`)}
+                            style={{ width: "100%" }}
+                            alt={product.title}
+                            className="img-fluid"
+                          />
+                          <div className="price h5 mt-2">${product.price}</div>
+                        </div>
+                      </Link>
+					  <div className="card-footer d-flex justify-content-between bg-light border">
+                  <Link
+                    to={`/detailProduct?productId=${product.id}`}
+                    className="btn btn-sm text-dark p-0"
+                  >
+                    <i className="fas fa-eye text-primary mr-1"></i>View Detail
+                  </Link>
+                  <Link
+                    to="/cart"
+                    className="btn btn-sm text-dark p-0"
+                  >
+                    <i className="fas fa-shopping-cart text-primary mr-1"></i>Add To Cart
+                  </Link>
+                </div>
+                    </li>
+                    
+                  ))
+                ) : (
+                  <p>No products found for this category.</p>
+                )}
+              </ul>
+             
+            </div>
+            
+          </div>
+        
+        </div>
+        <Link to="/listing?categoryId=1" className="btn btn-primary float-md-right">
+                Xem thêm
+              </Link>
+      </div>
+    </section>
+  );
+};
 
-	</div>
-</a>
-	</li>
-</ul>
-	</div> 
-</div> 
-</div> 
-</section>
-);
-export default CSGO
+export default Mixi;

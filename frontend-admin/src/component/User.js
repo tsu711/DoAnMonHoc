@@ -20,6 +20,7 @@ export  const listUser = (props) =>(
     <List {...props}>
         <Datagrid style={{overflow:"auto"}}>
             <TextField source ="id"/>
+            <TextField source ="username"/>
             <TextField source ="fullname"/>
             <TextField source ="email"/>
             <TextField source ="phone_number"/>
@@ -39,14 +40,13 @@ export  const editUser = (props) =>(
     
     <Edit {...props}> 
     <SimpleForm>
+    <TextInput source="username"/>
     <TextInput source="fullname"/>
     <TextInput source="email"/>
     <TextInput source="phone_number"/>
     <TextInput source="address"/>
     <TextInput source="password"/>
-    <DateInput source="created_at"/>
-    <DateInput source="updated_at"/> 
-    <NumberInput source="deleted"/>
+
     </SimpleForm>
     </Edit>
     
@@ -56,15 +56,13 @@ export  const createUser = (props) =>(
     <Create {...props}>
    
    <SimpleForm>
-   
+   <TextInput source="username"/>
     <TextInput source="fullname"/>
     <TextInput source="email"/>
     <TextInput source="phone_number"/>
     <TextInput source="address"/>
     <TextInput source="password"/>
-    <DateInput source="created_at"/>
-    <DateInput source="updated_at"/> 
-    <NumberInput source="deleted"/>
+
     </SimpleForm>
    
     </Create>

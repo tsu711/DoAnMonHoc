@@ -31,15 +31,15 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User getUserById(Long userId){
-        Optional<User> optionalUser = userRepository.findById(userId);
-        return optionalUser.get();
+    public User getUserById(Long userId) {
+        Optional<User> user = userRepository.findById(userId);
+        return user.orElse(null); // Trả về null nếu không tìm thấy người dùng
     }
 
      @Override
     public List<User> getAllUsers() {
         return userRepository.findAll();
-    }
+    } 
 @Override
       public User updateUser(User User){
         User existingUser = userRepository.findById(User.getId()).get();
@@ -60,5 +60,6 @@ public class UserServiceImpl implements UserService {
     public void deleteUser(Long userId){
         userRepository.deleteById(userId);
     }
+    
 
 }

@@ -1,17 +1,20 @@
 package com.nguyenvu.backend.controller;
 
 import java.util.List;
+import java.util.stream.Collectors;
+
 import lombok.AllArgsConstructor;
 
-
 import org.springframework.data.domain.Pageable;
-
+import org.springframework.beans.BeanUtils;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import com.nguyenvu.backend.DTO.ProductDTO;
 import com.nguyenvu.backend.entity.Product;
 import com.nguyenvu.backend.service.ProductService;
 
@@ -42,32 +45,32 @@ public class ProductController {
     // http://localhost:8080/api/Products
     @GetMapping
     public ResponseEntity<List<Product>> getAllProducts(
-    @RequestParam(defaultValue = "0") Integer page,
-    @RequestParam(defaultValue = "10") Integer size,
-    @RequestParam(required = false) Long categoryId
-    ) {
-    Pageable pageable = PageRequest.of(page, size);
-    Page<Product> products;
-    if (categoryId != null) {
-    products = productService.getProductsByCategoryId(categoryId, pageable);
-    
-    } else {
-    
-    products = productService.getAllProducts(pageable);
-    
+            @RequestParam(defaultValue = "0") Integer page,
+            @RequestParam(defaultValue = "12") Integer size,
+            @RequestParam(required = false) Long categoryId) {
+        Pageable pageable = PageRequest.of(page, size);
+        Page<Product> products;
+        if (categoryId != null) {
+            products = productService.getProductsByCategoryId(categoryId, pageable);
+
+        } else {
+
+            products = productService.getAllProducts(pageable);
+
+        }
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("Content-Range",
+                "items " + pageable.getOffset() + "-" + (pageable.getOffset() + products.getSize()) +
+                        "/" + products.getTotalElements());
+        return ResponseEntity.ok().headers(headers).body(products.getContent());
     }
-    HttpHeaders headers = new HttpHeaders();
-    headers.add("Content-Range", "items " + pageable.getOffset() + "-" + (pageable.getOffset() + products.getSize()) +
-    "/" + products.getTotalElements());
-    return ResponseEntity.ok().headers(headers).body(products.getContent());
-    }
+
     @GetMapping("/getlatest")
     public ResponseEntity<List<Product>> getProductsNew(
-    @RequestParam(name = "categoryid", required = false) Long category,
-    @RequestParam(name = "pagesize", required = false, defaultValue = "4") int pagesize
-    ) {
-    List<Product> products = productService.getLatestProductsInCategory(category, pagesize);
-    return ResponseEntity.ok(products);
+            @RequestParam(name = "categoryid", required = false) Long category,
+            @RequestParam(name = "pagesize", required = false, defaultValue = "4") int pagesize) {
+        List<Product> products = productService.getLatestProductsInCategory(category, pagesize);
+        return ResponseEntity.ok(products);
     }
 
     // Update Product REST API
@@ -86,4 +89,51 @@ public class ProductController {
         productService.deleteProduct(ProductId);
         return new ResponseEntity<>("Product successfully deleted", HttpStatus.OK);
     }
+
+    @GetMapping("/price-range")
+    public ResponseEntity<List<Product>> getProductsByPriceRange(
+            @RequestParam(value = "sortOption", defaultValue = "") String sortOption,
+            @RequestParam("minPrice") int minPrice,
+            @RequestParam("maxPrice") int maxPrice,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "12") int size,
+            @RequestParam(required = false) Long categoryId) {
+
+        // Create pageable object for pagination
+        Pageable pageable = PageRequest.of(page, size);
+
+        // Call ProductService to fetch products by price range
+        Page<Product> products = productService.getProductsByPriceRange(sortOption, minPrice, maxPrice, pageable);
+
+        // Construct Content-Range header
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("Content-Range",
+                "items " + pageable.getOffset() + "-" + (pageable.getOffset() + products.getSize() - 1) +
+                        "/" + products.getTotalElements());
+
+        // Return response entity with headers and product page content
+        return ResponseEntity.ok().headers(headers).body(products.getContent());
+    }
+
+    @GetMapping("/search")
+    public List<ProductDTO> searchProducts(@RequestParam(name = "title", required = false) String title) {
+        List<Product> products = productService.searchProductsByTitle(title);
+        return products.stream()
+                .map(this::convertToDTO)
+                .collect(Collectors.toList());
+    }
+        
+    
+
+     private ProductDTO convertToDTO(Product product) {
+        ProductDTO productDTO = new ProductDTO();
+        BeanUtils.copyProperties(product, productDTO);
+        productDTO.setGalleries(product.getGalleries());
+        productDTO.setColors(product.getColors());
+        productDTO.setSizes(product.getSizes());
+        return productDTO;
+    }
+
+
+
 }

@@ -1,4 +1,4 @@
-import React from 'react';
+import React from "react";
 
 const Menu = ({ menu }) => {
   return (
@@ -7,18 +7,21 @@ const Menu = ({ menu }) => {
         <li className="nav-item dropdown">
           {menu.menu_item ? (
             <React.Fragment>
-              <a
-                className="nav-link dropdown-toggle"
-                data-toggle="dropdown"
-                href={menu.href }  // Sử dụng giá trị href từ dữ liệu menu hoặc một giá trị mặc định nếu không có
-              >
-                {" "}
-                <i></i> {menu.menu}{" "}
-              </a>
-              <div className="dropdown-menu dropdown-large">
+              <div class="nav-item dropdown">
+                <a
+                  href={menu.href}
+                  class="nav-link dropdown-toggle"
+                  data-toggle="dropdown"
+                >
+                  {" "}
+                  {menu.menu}
+                </a>
                 <nav className="row">
-                  <div className="col-6">
-                    <a className="dropdown-item" href={menu.menu_item_href || '/information'}>
+                  <div class="dropdown-menu rounded-0 m-0">
+                    <a
+                      className="dropdown-item"
+                      href={menu.menu_item_href || "/information"}
+                    >
                       {menu.menu_item}
                     </a>
                   </div>
@@ -26,7 +29,7 @@ const Menu = ({ menu }) => {
               </div>
             </React.Fragment>
           ) : (
-            <a className="nav-link" href={menu.href}>
+            <a className="nav-link  text-bold" href={menu.href}>
               {menu.menu}
             </a>
           )}

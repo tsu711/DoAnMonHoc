@@ -1,33 +1,42 @@
 package com.nguyenvu.backend.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-
-// import com.fasterxml.jackson.annotation.JsonIgnore;
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-
-
+@Table(name = "order_detail")
 public class OrderDetail {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private int price;
-    private int num;
-    private int total_money;
-    private int quantity;
-    private int image; 
-    
-    @ManyToOne
-    private Product product;
 
     @ManyToOne
-    private Orders order;
+    @JoinColumn(name = "order_id")
+    @JsonBackReference // Use this to avoid infinite recursion
+    private Order order;
+
+    @ManyToOne
+    @JoinColumn(name = "product_id")
+    private Product product;
+
+    private int quantity;
+    private long priceOrder;
+
+    @ManyToOne
+    private Color color;
+
+    @ManyToOne
+    private Size size;
+
+    // Getters and setters
 }
