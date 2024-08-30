@@ -89,18 +89,20 @@ public class OrderServiceImpl implements OrderService {
             }
         }
     
-        // Xóa các mục giỏ hàng liên quan đến đơn hàng và thêm vào listIdCart
-        List<Long> cartIds = new ArrayList<>();
+        // Xóa các mục giỏ hàng liên quan đến đơn hàng và thêm vào listIdCart nếu có
+    List<Long> cartIds = new ArrayList<>();
+    if (order.getListIdCart() != null) {
         for (Long cartId : order.getListIdCart()) {
             cartRepository.findById(cartId).ifPresent(cart -> {
                 cartIds.add(cart.getId());
                 cartRepository.delete(cart);
             });
         }
-        savedOrder.setListIdCart(cartIds);
-    
-        return new ResponseEntity<>(savedOrder, HttpStatus.CREATED);
     }
+    savedOrder.setListIdCart(cartIds.isEmpty() ? null : cartIds);
+
+    return new ResponseEntity<>(savedOrder, HttpStatus.CREATED);
+}
 
     @Override
     public List<Order> getOrderByUserId(String userId) {

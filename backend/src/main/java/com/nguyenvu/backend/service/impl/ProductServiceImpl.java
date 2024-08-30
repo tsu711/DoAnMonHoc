@@ -11,7 +11,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
-import org.springframework.http.ResponseEntity;
 @Service
 @AllArgsConstructor
 public class ProductServiceImpl implements ProductService {
@@ -27,8 +26,6 @@ public class ProductServiceImpl implements ProductService {
             return new ArrayList<>();
         }
     }
-
-
     @Override
     public Product createProduct(Product Product) {
         return productRepository.save(Product);

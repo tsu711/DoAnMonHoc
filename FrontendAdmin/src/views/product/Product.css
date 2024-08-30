@@ -1,0 +1,18 @@
+/* CSS cho nút Add Product */
+.custom-button {
+    background-color: blue;
+    color: white;
+    border: 1px solid blue;
+    transition: background-color 0.3s, border-color 0.3s;
+  }
+  
+  .custom-button:hover {
+    background-color: green;
+    border-color: green;
+  }
+  
+  /* Đảo ngược màu chữ khi hover */
+  .custom-button:hover span {
+    color: white;
+  }
+  

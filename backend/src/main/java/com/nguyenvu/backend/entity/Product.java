@@ -10,13 +10,13 @@ import java.util.Date;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+
 // import com.fasterxml.jackson.annotation.JsonIgnore;
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-
 
 public class Product {
     @Id
@@ -31,23 +31,26 @@ public class Product {
     private String thumbnail;
     private int quantity;
     private String description;
+
     @ManyToOne
     @JoinColumn(name = "color_id")
     private Color colors;
+
     @ManyToOne
     @JoinColumn(name = "size_id")
     private Size sizes;
+    
     private Date created_at;
     private Date updated_at;
     private int deleted;
-    
+
     @ManyToOne
     private Category category;
 
     @JsonIgnore
     @ManyToMany(mappedBy = "product")
     private List<Gallery> galleries;
-    
+
     @ManyToOne
     @JoinColumn(name = "product_id")
     private Cart cart;

@@ -23,6 +23,7 @@ public class Size {
     private String name;
 
     @OneToMany(mappedBy = "sizes")
+    @JsonIgnore
     private Set<Product> products;
 
 }

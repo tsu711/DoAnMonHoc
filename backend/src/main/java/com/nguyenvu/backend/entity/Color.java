@@ -1,6 +1,6 @@
 package com.nguyenvu.backend.entity;
 
-import java.util.Set;
+import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
@@ -23,6 +23,7 @@ public class Color {
     private String name;
 
     @OneToMany(mappedBy = "colors")
-    private Set<Product> products;
+    @JsonIgnore
+    private List<Product> products;
 
 }

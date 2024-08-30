@@ -70,7 +70,6 @@ public class OrderController {
         return ResponseEntity.noContent().build();
     }
 
-    // Get Orders by User Id REST API
     @GetMapping("/users/{userId}")
     public ResponseEntity<List<Order>> getOrderByUserId(@PathVariable("userId") String userId) {
         List<Order> orders = orderService.getOrderByUserId(userId);
@@ -87,7 +86,7 @@ public class OrderController {
             orderWithDetails.setPaymentMethod(order.getPaymentMethod());
             orderWithDetails.setStatus(order.getStatus());
             orderWithDetails.setUserId(order.getUserId());
-
+    
             List<OrderDetail> orderDetails = new ArrayList<>();
             for (OrderDetail orderDetail : order.getOrderDetails()) {
                 OrderDetail detail = new OrderDetail();
@@ -100,18 +99,21 @@ public class OrderController {
                 orderDetails.add(detail);
             }
             orderWithDetails.setOrderDetails(orderDetails);
-
-            List<Long> listIdCart = new ArrayList<>();
-            for (Cart cart : order.getCart()) {
-                listIdCart.add(cart.getId());
+    
+            if (order.getCart() != null && !order.getCart().isEmpty()) {
+                List<Long> listIdCart = new ArrayList<>();
+                for (Cart cart : order.getCart()) {
+                    listIdCart.add(cart.getId());
+                }
+                orderWithDetails.setListIdCart(listIdCart);
+            } else {
+                orderWithDetails.setListIdCart(null); // Set listIdCart thành null nếu không có cart
             }
-            orderWithDetails.setListIdCart(listIdCart);
-
+    
             ordersWithDetails.add(orderWithDetails);
         }
         return ResponseEntity.ok(ordersWithDetails);
     }
-
     @ControllerAdvice
     public class GlobalExceptionHandler {
 

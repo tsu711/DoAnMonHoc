@@ -46,7 +46,7 @@ public class ProductController {
     @GetMapping
     public ResponseEntity<List<Product>> getAllProducts(
             @RequestParam(defaultValue = "0") Integer page,
-            @RequestParam(defaultValue = "12") Integer size,
+            @RequestParam(defaultValue = "100") Integer size,
             @RequestParam(required = false) Long categoryId) {
         Pageable pageable = PageRequest.of(page, size);
         Page<Product> products;

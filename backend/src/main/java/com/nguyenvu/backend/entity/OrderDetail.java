@@ -22,7 +22,7 @@ public class OrderDetail {
 
     @ManyToOne
     @JoinColumn(name = "order_id")
-    @JsonBackReference // Use this to avoid infinite recursion
+    @JsonIgnore // Use this to avoid infinite recursion
     private Order order;
 
     @ManyToOne

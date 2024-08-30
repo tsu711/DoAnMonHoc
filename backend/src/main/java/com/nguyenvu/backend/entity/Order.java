@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 import jakarta.persistence.CascadeType;
@@ -49,7 +50,7 @@ public class Order {
     private List<Long> listIdCart;
 
      @OneToMany(mappedBy = "order", cascade = CascadeType.ALL)
-    @JsonManagedReference
+    @JsonIgnore
     private List<OrderDetail> orderDetails = new ArrayList<>();
 
     @OneToMany(cascade = CascadeType.ALL)
